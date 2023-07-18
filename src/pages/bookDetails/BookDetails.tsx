@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom"
-import { useGetBookByIdQuery } from "../../redux/services/booksService"
 import BookDetailsComponent from "./BookDetailsComponent"
+import { useGetBookByIdQuery } from "../../redux/services/booksService"
 
 
 const BookDetails = () => {
