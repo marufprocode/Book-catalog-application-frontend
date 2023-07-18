@@ -1,7 +1,7 @@
 export interface IBook {
   id?: string;
-  wishList?: boolean;
   readingList?: boolean;
+  wishList?: boolean;
   title: string;
   author: string;
   genre: string;
