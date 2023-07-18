@@ -1,7 +1,7 @@
 import { RouterProvider } from "react-router-dom";
 import routes from "./router/router";
-import useAuthcheck from "./hooks/useAuthCheck";
 import { Toaster } from "react-hot-toast";
+import useAuthcheck from "./hooks/useAuthCheck";
 
 export default function App() {
   const authChecked = useAuthcheck();
