@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { IBook } from "../interfaces/books";
 import { FaBook, FaHeart } from "react-icons/fa";
-import { Button } from "antd";
+import { Button, Tag } from "antd";
 import { useAppSelector } from "../redux/store";
 import { selectAuth } from "../redux/slices/authSlice";
 import {
@@ -25,15 +25,20 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
     useAddToWishlistMutation();
   const [addToReadingList, { isSuccess: readingListAdded }] =
     useUpdateReadingListMutation();
+  const [updateReadingStatus, { isSuccess: readingStatusUpdated }] =
+    useUpdateReadingListMutation();
   const [deleteFromWishList, { isSuccess: wishListRemoved }] =
     useRemoveFromWishlistMutation();
   const [deleteFromReadingList, { isSuccess: readingListRemoved }] =
     useRemoveFromReadingListMutation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     wishListAdded && toast.success("Wish list added successfully");
   }, [wishListAdded]);
+  useEffect(() => {
+    readingStatusUpdated && toast.success("Reading Status Updated Successfully");
+  }, [readingStatusUpdated]);
   useEffect(() => {
     readingListAdded && toast.success("Reading list added successfully");
   }, [readingListAdded]);
@@ -46,14 +51,14 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
   }, [readingListRemoved]);
 
   return (
-    <div className="p-3 rounded-md bg-slate-50 relative flex gap-3 max-h-fit w-fit">
+    <div className="p-3 rounded-md bg-slate-50 relative flex gap-3 max-h-fit w-full">
       <img
         src={
           book?.image ||
           "https://edit.org/images/cat/book-covers-big-2019101610.jpg"
         }
         alt={book?.title}
-        className="w-full h-40 object-cover rounded-md"
+        className="w-32 object-cover rounded-md"
       />
       <div className="rounded-md w-fit relative leading-5 whitespace-nowrap">
         {user && (
@@ -76,7 +81,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
               </button>
               <button
                 onClick={async () => {
-                  if (book?.readingList) {
+                  if (book?.readingList?.id) {
                     await deleteFromReadingList(book?.id as string);
                   } else {
                     await addToReadingList({
@@ -88,20 +93,61 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
               >
                 <FaBook
                   className={`${
-                    book?.readingList ? "text-red-500" : "text-gray-500"
+                    book?.readingList?.id ? "text-red-500" : "text-gray-500"
                   }  cursor-pointer`}
                 />
               </button>
             </div>
           </div>
         )}
-        <h3 className="text-lg font-semibold mb-2 whitespace-pre-wrap">{book?.title}</h3>
+        <h3 className="text-lg font-semibold mb-2 whitespace-pre-wrap">
+          {book?.title}
+        </h3>
         <p className="text-gray-500 text-sm font-semibold">By {book?.author}</p>
         <p className="text-gray-500 text-sm font-semibold">{book?.genre}</p>
         <p className="text-gray-500 text-sm font-semibold">
           Publication Year: {book?.publicationYear}
         </p>
-        <Button className="bg-slate-500 mt-4" size="small" onClick={()=> navigate(`/book/${book?.id}`)}>
+        {book?.readingList?.id && (
+          <div>
+            <p className="text-gray-500 text-sm font-semibold">Status:</p>
+            <button onClick={async ()=> {
+              if(book?.readingList?.status !== "Read Soon"){
+                await updateReadingStatus({
+                  id: book?.id,
+                  status: "Read Soon",
+                })
+              }
+            }}>
+              <Tag color={`${book?.readingList?.status === "Read Soon" ? "#f50":"gold"}`}>Read Soon</Tag>
+            </button>
+            <button onClick={async ()=>{
+              if(book?.readingList?.status !== "Currently Reading"){
+                await updateReadingStatus({
+                  id: book?.id,
+                  status: "Currently Reading",
+                })
+              }
+            }}>
+            <Tag color={`${book?.readingList?.status === "Currently Reading" ? "#2db7f5":"cyan"}`}>Reading</Tag>
+            </button>
+            <button onClick={async ()=>{
+              if(book?.readingList?.status !== "Reading Completed"){
+                await updateReadingStatus({
+                  id: book?.id,
+                  status: "Reading Completed",
+                })
+              }
+            }}>
+            <Tag color={`${book?.readingList?.status === "Reading Completed" ? "#87d068":"green"}`}>Completed</Tag>
+            </button>
+          </div>
+        )}
+        <Button
+          className="bg-slate-500 mt-4"
+          size="small"
+          onClick={() => navigate(`/book/${book?.id}`)}
+        >
           Details
         </Button>
       </div>

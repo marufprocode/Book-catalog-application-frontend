@@ -32,6 +32,7 @@ const BookDetailsComponent: React.FC<BookDetailsProps> = ({ book }) => {
   // const showModal = () => {
   //   setIsModalVisible(true);
   // };
+  console.log(book);
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -45,7 +46,7 @@ const BookDetailsComponent: React.FC<BookDetailsProps> = ({ book }) => {
       cancelText: "Cancel",
       onOk: () => {
         deleteBook(book?.id);
-        navigate('/')
+        navigate("/");
       },
     });
   };
@@ -60,7 +61,7 @@ const BookDetailsComponent: React.FC<BookDetailsProps> = ({ book }) => {
     });
   };
 
-  if (!book) return <h2 className="text-lg font-bold">No Book Found</h2>
+  if (!book) return <h2 className="text-lg font-bold">No Book Found</h2>;
 
   return (
     <div className="p-5">
@@ -94,12 +95,17 @@ const BookDetailsComponent: React.FC<BookDetailsProps> = ({ book }) => {
       <Divider />
 
       <Typography.Title level={3}>Reviews</Typography.Title>
-      {book?.reviews?.map((review) => (
-        <div key={review.user}>
-          <Typography.Text strong>{review?.name}</Typography.Text>{" "}
-          <Typography.Text>{review?.review}</Typography.Text>
-        </div>
-      ))}
+
+      {book?.reviews && book?.reviews?.length > 0 ? (
+        book?.reviews?.map((review, index) => (
+          <div key={index} className="mt-2 leading-none">
+            <Typography.Text strong>{review?.review}</Typography.Text>
+            <p className="text-xs text-gray-500">by: {review?.name}</p>
+          </div>
+        ))
+      ) : (
+        <p>No reviews available.</p>
+      )}
 
       {user && (
         <div className="mt-4">
@@ -144,7 +150,7 @@ const BookDetailsComponent: React.FC<BookDetailsProps> = ({ book }) => {
 
       <Modal
         title="Confirmation"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={[
           <Button key="cancel" onClick={handleCancel}>
