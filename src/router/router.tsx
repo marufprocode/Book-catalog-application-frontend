@@ -7,8 +7,8 @@ import AllBooks from './../pages/allBooks/AllBooks';
 import AddBook from './../pages/addBook/AddBook';
 import WishList from "../pages/wishlist/WishList";
 import ReadingList from "../pages/readingList/ReadingList";
-import BookDetails from './../pages/bookDetails/BookDetails';
 import EditBook from "../pages/editBook/EditBook";
+import BookDetails from './../pages/bookDetails/BookDetails';
 
 const routes = createBrowserRouter([
     {
