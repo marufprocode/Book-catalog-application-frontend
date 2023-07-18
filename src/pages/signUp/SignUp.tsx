@@ -1,7 +1,7 @@
-import { Form, Input, Button } from "antd";
-import { useSignupMutation } from "../../redux/services/authService";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Form, Input, Button } from "antd";
+import { useSignupMutation } from "../../redux/services/authService";
 import { toast } from "react-hot-toast";
 
 const Signup = () => {
