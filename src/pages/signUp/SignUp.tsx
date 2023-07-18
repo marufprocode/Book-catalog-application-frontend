@@ -1,9 +1,23 @@
 import { Form, Input, Button } from "antd";
+import { useSignupMutation } from "../../redux/services/authService";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Signup = () => {
-  const onFinish = (values: Record<string, unknown>) => {
+  const [signup, {isLoading, isSuccess}] = useSignupMutation()
+  const navigate = useNavigate()
+  const onFinish = async (values: Record<string, unknown>) => {
     console.log(values);
+    await signup(values)
   };
+
+  useEffect(()=>{
+    if(isSuccess){
+      toast.success('User Signed up successfully, please log in now.');
+      navigate('/login')
+    }
+  },[isSuccess, navigate]) 
 
   return (
     <div className="flex items-center justify-center mt-20">
@@ -14,7 +28,6 @@ const Signup = () => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
-          autoComplete="off"
         >
           <Form.Item
             label="Name"
@@ -51,6 +64,7 @@ const Signup = () => {
               type="primary"
               htmlType="submit"
               className="w-full rounded-md"
+              loading={isLoading}
             >
               Signup
             </Button>

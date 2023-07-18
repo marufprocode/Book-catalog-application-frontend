@@ -3,7 +3,16 @@ import { apiSlice } from "./bookCtgApi";
 export const usersService = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllBooks: builder.query({
-      query: () => "/books",
+      query: (params) => {
+        const queryParams = new URLSearchParams(params).toString();
+        console.log(queryParams, params)
+        return `/books?${queryParams}`;
+      },
+      providesTags:["books"],
+    }),
+    getAllFilters: builder.query({
+      query: (params) => `/books/distinct/${params}`,
+      providesTags:["books"]
     }),
     createBook: builder.mutation({
       query: (book) => ({
@@ -11,6 +20,7 @@ export const usersService = apiSlice.injectEndpoints({
         method: "POST",
         body: book as Record<string, unknown>,
       }),
+      invalidatesTags:["books"]
     }),
     getBookById: builder.query({
       query: (id) => `books/${id as string}`,
@@ -20,6 +30,7 @@ export const usersService = apiSlice.injectEndpoints({
         url: `books/${id as string}`,
         method: "DELETE",
       }),
+      invalidatesTags:["books"]
     }),
     updateBook: builder.mutation({
       query: ({ id, ...book }) => ({
@@ -27,6 +38,15 @@ export const usersService = apiSlice.injectEndpoints({
         method: "PATCH",
         body: book as Record<string, unknown>,
       }),
+      invalidatesTags:["books"]
+    }),
+    postReview: builder.mutation({
+      query: (payload) => ({
+        url: `/books/review/${payload.bookId}`,
+        method: 'POST',
+        body: payload.reviewData,
+      }),
+      invalidatesTags:["books"]  
     }),
   }),
 });
@@ -37,4 +57,6 @@ export const {
   useGetBookByIdQuery,
   useDeleteBookMutation,
   useUpdateBookMutation,
+  useGetAllFiltersQuery,
+  usePostReviewMutation
 } = usersService;

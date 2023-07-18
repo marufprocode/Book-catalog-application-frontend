@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { logout, selectAuth } from "../redux/slices/authSlice";
 import { Input } from "antd";
@@ -8,7 +8,8 @@ const { Search } = Input;
 export default function Header() {
   const { accessToken } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch()
-  const onSearch = (value: string) => console.log(value);
+  const navigate = useNavigate()
+  const onSearch = (value: string) => navigate(`all-books?search=${value}`)
   return (
     <header className="py-3 px-5 w-full dark:bg-slate-700 dark:text-gray-100 bg-[#928AEE] flex justify-between items-center">
       <h3 className="text-xl font-semibold w-fit whitespace-nowrap">
@@ -16,7 +17,7 @@ export default function Header() {
       </h3>
       <div className="w-full px-10">
         <Search
-          placeholder="input search text"
+          placeholder="serach books by title, author, or genre"
           className="w-full"
           onSearch={onSearch}
           enterButton

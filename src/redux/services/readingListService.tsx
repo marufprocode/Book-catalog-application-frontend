@@ -4,19 +4,22 @@ export const readingListService = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getReadingList: builder.query({
       query: () => "/readinglist",
+      providesTags:["books","readinglist"]
     }),
     updateReadingList: builder.mutation({
-      query: (item) => ({
+      query: (data) => ({
         url: '/readinglist',
         method: "PATCH",
-        body: item as Record<string, unknown>
+        body: data as Record<string, unknown>
       }),
+      invalidatesTags:["readinglist"]
     }),
     removeFromReadingList: builder.mutation<void, string>({
       query: (id) => ({
         url: `readinglist/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags:["readinglist"]
     }),
   }),
 });
