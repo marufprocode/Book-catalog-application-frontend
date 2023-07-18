@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Form, Input } from "antd";
 import { useLoginMutation } from "../../redux/services/authService";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 export interface LoginValues {
   email: string;
