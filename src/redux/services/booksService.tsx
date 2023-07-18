@@ -24,6 +24,7 @@ export const usersService = apiSlice.injectEndpoints({
     }),
     getBookById: builder.query({
       query: (id) => `books/${id as string}`,
+      providesTags:["books"],
     }),
     deleteBook: builder.mutation({
       query: (id) => ({

@@ -1,75 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  useGetAllBooksQuery,
   useGetAllFiltersQuery,
 } from "../../redux/services/booksService";
-import BookCard from "../../components/BookCard";
 import { Button, Checkbox, Dropdown } from "antd";
 import { useCallback, useState } from "react";
 import { BsFilterLeft } from "react-icons/bs";
 import { useEffect } from "react";
 import { useAppSelector } from "../../redux/store";
 import { selectAuth } from "../../redux/slices/authSlice";
-import { useGetWishlistQuery } from "../../redux/services/wishlistService";
-import { useGetReadingListQuery } from "../../redux/services/readingListService";
+import BooksContainer from './../../components/BooksContainer';
+import { CheckboxValueType } from "antd/es/checkbox/Group";
 
 export default function AllBooks() {
-  const location = useLocation();
-  const {user}= useAppSelector(selectAuth)
   const [queryStr, setQueryStr] = useState("");
-  const { data: books, isLoading } = useGetAllBooksQuery(queryStr);
-  const {data:wishlist} = useGetWishlistQuery(null, {skip:!user});
-  const {data:readingList} = useGetReadingListQuery(null, {skip:!user});
+  const {user}= useAppSelector(selectAuth)
+  const location = useLocation();
+
   const { data: genre } = useGetAllFiltersQuery("genre");
   const { data: years } = useGetAllFiltersQuery("publicationYear");
   const [visible, setVisible] = useState("");
-  const [booksData, setBooksData] = useState([]);
+  
   const navigate = useNavigate();
-
-  console.log({booksData, wishlist})
-
-  useEffect(() => {
-    if (books?.data) {
-      const updatedBooksData = books?.data.map((book:any) => {
-        const updatedBook = { ...book };
-  
-        if (wishlist?.data?.length > 0) {
-          updatedBook.wishList = wishlist?.data?.some(
-            (wishlistItem:any) => wishlistItem.book.id === book.id
-          );
-        }
-  
-        if (readingList?.data?.length > 0) {
-          updatedBook.readingList = readingList?.data?.some(
-            (readingItem:any) => readingItem.book.id === book.id
-          );
-        }
-  
-        return updatedBook;
-      });
-  
-      setBooksData(updatedBooksData);
-    }
-  }, [books?.data, readingList?.data, wishlist?.data]);
-  
-
-  const handleVisibleChange = useCallback((flag: string) => {
-    setVisible(flag);
-  }, []);
-
-  const onChangeGenre = (values:string[]) => {
-    const queryString = values
-      ?.map((g) => `genre=${g}`)
-      .join("&");
-    setQueryStr(location.search? `${location.search+`&${queryString}`}`:`?${queryString}`);
-  };
-  const onChangeYear = (values:number[]) => {
-    const queryString = values
-      ?.map((g) => `publicationYear=${g}`)
-      .join("&");
-    setQueryStr(queryStr? `${queryStr+`&${queryString}`}`:`?${queryString}`);
-  };
 
   useEffect(() => {
     if (location?.search) {
@@ -77,8 +29,22 @@ export default function AllBooks() {
     }
   }, [location?.search]);
 
-  if (!isLoading && !(books?.data?.length > 0))
-    return <h2 className="text-xl font-semibold p-3">No Books Found</h2>;
+  const handleVisibleChange = useCallback((flag: string) => {
+    setVisible(flag);
+  }, []);
+
+  const onChangeGenre = (values:CheckboxValueType[]) => {
+    const queryString = values
+      ?.map((g) => `genre=${g}`)
+      .join("&");
+    setQueryStr(location.search? `${location.search+`&${queryString}`}`:`?${queryString}`);
+  };
+  const onChangeYear = (values:CheckboxValueType[]) => {
+    const queryString = values
+      ?.map((g) => `publicationYear=${g}`)
+      .join("&");
+    setQueryStr(queryStr? `${queryStr+`&${queryString}`}`:`?${queryString}`);
+  };
 
   return (
     <div>
@@ -145,14 +111,7 @@ export default function AllBooks() {
           }
         </div>
       </div>
-      {isLoading && <p>Books Loading...</p>}
-      {booksData?.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 mb-10 place-items-center">
-          {booksData?.map((book: any) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
-      )}
+      <BooksContainer queryStr={queryStr}/>
     </div>
   );
 }

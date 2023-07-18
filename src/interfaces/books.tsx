@@ -1,10 +1,16 @@
 export interface IBook {
-  id?:string;
+  id?: string;
   wishList?: boolean;
-  readingList?:boolean;
+  readingList?: boolean;
   title: string;
   author: string;
   genre: string;
   publicationYear: number;
   image?: string;
+  reviews?: {
+    user: string;
+    name: string;
+    review: string;
+  }[];
+  createdBy?:string;
 }
