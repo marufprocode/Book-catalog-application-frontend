@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
-import authSlice from './slices/authSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
+import authSlice from './slices/authSlice'
 import { apiSlice } from './services/bookCtgApi';
 
 export const store = configureStore({
